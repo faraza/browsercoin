@@ -6,22 +6,35 @@ Later, we will add support for other versions of Bitcoin throughout the years, a
 
 We will also allow completely custom coins, like Bitcoin 0.1 with proof-of-stake instead of proof-of-work.
 
-Because all of the honest miners will be running on a browser, it will be easy for an adversary to launch a 51% attack by mining on their computer. Because of this, COINS RUNNING ON BROWSERCOIN HAVE ZERO MONETARY VALUE!!! This project is just meant to experiment with various coins and learn how to blockchain works. In fact, we may add a feature down the line that lets users team up to launch a 51% attack, so everyone can better understand how it works.
+Because all of the honest miners will be running on a browser, it will be easy for an adversary to launch a 51% attack by mining on their computer. Because of this, COINS RUNNING ON BROWSERCOIN HAVE ZERO MONETARY VALUE!!! This project is just meant to experiment with various coins and learn how the blockchain works. In fact, we may add a feature down the line that lets users team up to launch a 51% attack as an educational/testing tool.
 
-Users will also be able to select the net number that they want to run on, from 0 to 99999. Users can join older/more widely used blockchains, or create the genesis block of a brand new one if they want. All of these should be illustrative of the life cycle of the blockchain.
+Users will also be able to select the net number that they want to run on, from 0 to 99999. Users can join older/more widely used blockchains, or create the genesis block of a brand new one if they want. All of these should be illustrative in different ways of the life cycle of the blockchain.
 
 As a user mines, sees new transactions, and receives completed blocks, the React web app will update to show all of them, along with the full block chain. 
 
-Later, we will show aggregate stats on the server such as total number of active miners. These stats would be harder on a traditional blockchain to determine because the miners would not send data to a central server. While that is not required for this, it is something nice that we can toggle on to provide interesting insights about blockchain performance. Again, none of these are 'real' coins but are educational and experimental tools for understanding the blockchain. 
-We can launch two versions of each coin - one which does keep centralized stats, and one that doesn't, so users can play around with whichever one they prefer.
+Later, we will show aggregate stats on the server such as total number of active miners and number of miners added/dropped over time. These stats would be hard or impossible to determine on a traditional blockchain, because the miners would not send data to a central server. While a centralized server is not required for Browsercoin, it is something nice that we can toggle on to provide interesting insights about blockchain performance. To reiterate, none of these are 'real' coins but are educational and experimental tools for understanding the blockchain. 
+We can launch two versions of each coin - one which does communicate with a central server to provide stats, and one that doesn't, as some might consider a blockchain in which all nodes communicate with a central server to be illegitimate.
+
+----------
+WhitePaperCoin
+
+Same as Bitcoin 0.1 it has the following differences:
+
+-Blocks only store up to 10 transactions. This is so a browser can run a full node without running into issues.
+
+-No changing proof of work requirement. This is just to make implementation easier. We'll probably implement this later.
+
+-Blocks are greatly simplified to keep their size small and make to implementation easier. They consist of: block number, previous block hash, timestamp, 10 transactions, and the nonce.
 
 
+----------
 TODO LIST:
 -Implement WhitePaperCoin
 -Make a nice UI in React
 -Deploy to the web
 -Add unit tests
 -Let users select the blockchain net that they want to participate in
+-Users can decide what nonce to start from instead of client choosing random one for them
 -Let users join mining pools
 -Let mining pools team up to launch 51% attacks
 -Allow users to run WhitePaperCoin with Proof of Stake
