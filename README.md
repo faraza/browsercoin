@@ -15,6 +15,8 @@ As a user mines, sees new transactions, and receives completed blocks, the React
 Later, we will show aggregate stats on the server such as total number of active miners and number of miners added/dropped over time. These stats would be hard or impossible to determine on a traditional blockchain, because the miners would not send data to a central server. While a centralized server is not required for Browsercoin, it is something nice that we can toggle on to provide interesting insights about blockchain performance. To reiterate, none of these are 'real' coins but are educational and experimental tools for understanding the blockchain. 
 We can launch two versions of each coin - one which does communicate with a central server to provide stats, and one that doesn't, as some might consider a blockchain in which all nodes communicate with a central server to be illegitimate.
 
+P2P initially discovery will be implemented in the beginning with a signaling server. However, this violates the distributed blockchain principle of not being reliant on a centralized server. Later, we will publish the addresses of well known full nodes on the Browsercoin page, in order to demonstrate this principle of P2P discovery. Ideally, this should be mirrored on many different websites controlled by different parties to mitigate the consequences of an attacker hacking the webpage.
+
 ----------
 WhitePaperCoin
 
@@ -26,6 +28,10 @@ Same as Bitcoin 0.1 it has the following differences:
 
 -Blocks are greatly simplified to keep their size small and make to implementation easier. They consist of: block number, previous block hash, timestamp, 10 transactions, and the nonce.
 
+-Block reward starts at 5 coins and doesn't decrease, in order to make implementation easier.
+
+-Transaction hash is signed by 1) all 
+
 
 ----------
 TODO LIST:
@@ -35,6 +41,9 @@ TODO LIST:
 -Add unit tests
 -Let users select the blockchain net that they want to participate in
 -Users can decide what nonce to start from instead of client choosing random one for them
+-Let users try to double spend UTXO
+-Let users try to create transactions with fake UTXO
+-Let users try to sign transactions with bogus private keys
 -Let users join mining pools
 -Let mining pools team up to launch 51% attacks
 -Allow users to run WhitePaperCoin with Proof of Stake
