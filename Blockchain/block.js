@@ -46,12 +46,14 @@ module.exports = class Block{
     findNonce(startingNonce = 0){
         let curNonce = startingNonce;
         
-        while(!this.isValidProofOfWork(curNonce)) curNonce++;        
+        while(!this.isValidProofOfWork(curNonce)){             
+            curNonce++;                    
+        }
         return curNonce;
     }
 
     isValidProofOfWork(inputNonce){        
-        let hash = sha256(this.toStringForHashing(inputNonce.toString()));
+        const hash = sha256(this.toStringForHashing(inputNonce.toString()));
         return this.doesStringHaveLeadingZeros(hash)        
     }
 
@@ -64,7 +66,7 @@ module.exports = class Block{
             return 0;
         }
 
-        return sha256(this.toStringForHashing(inputNonce));
+        return sha256(this.toStringForHashing(this.nonce));
     }
 
     confirmProofOfWork(){
@@ -91,7 +93,7 @@ module.exports = class Block{
      */
     toStringForHashing(inputNonce){
         return (this.blockNum + this.minerPublicKey + this.timestamp + this.blockReward
-            + this.numZeros + this.prevHash + this.inputNonce);
+            + this.numZeros + this.prevHash + inputNonce);
     }
 
     toStringForPrinting(){

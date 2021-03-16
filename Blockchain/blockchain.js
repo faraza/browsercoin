@@ -5,7 +5,7 @@ class Blockchain {
         this.blocks = []
         this.myPublicKey = "myPublicKey1"
         this.blockReward = 50;
-        this.numZeros = 4;
+        this.numZeros = 5;
     }
 
     run(){        
@@ -28,7 +28,7 @@ class Blockchain {
 
     printLatestBlock(){
         const latestBlock = this.blocks[this.blocks.length - 1]
-        console.log("***New block mined! " + latestBlock.toStringForPrinting());
+        console.log("\n***New block mined! " + latestBlock.toStringForPrinting());
     }
 
     getTotalWalletSize(){
