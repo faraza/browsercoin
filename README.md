@@ -48,3 +48,4 @@ TODO LIST:
 -Let mining pools team up to launch 51% attacks
 -Allow users to run WhitePaperCoin with Proof of Stake
 -Implement Ethereum 1.0 and 2.0
+-Implement Gossip Protocol with reputation system
