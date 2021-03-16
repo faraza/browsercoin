@@ -39,18 +39,32 @@ module.exports = class Block{
         this.nonce = null;
     }
 
-    mine(inputNonce){
-        if(this.isValidProofOfWork(inputNonce)){
-            this.nonce = inputNonce;
-            return true;
-        }
+    setNonce(nonce){
+        this.nonce = nonce;
+    }    
 
-        return false;
+    findNonce(startingNonce = 0){
+        let curNonce = startingNonce;
+        
+        while(!this.isValidProofOfWork(curNonce)) curNonce++;        
+        return curNonce;
     }
 
     isValidProofOfWork(inputNonce){        
-        let hash = sha256(this.toStringForHashing(inputNonce));
+        let hash = sha256(this.toStringForHashing(inputNonce.toString()));
         return this.doesStringHaveLeadingZeros(hash)        
+    }
+
+    /**
+     * Assumes the block has been mined
+     */
+    getHash(){
+        if(this.nonce == null){
+            console.log("ERROR. Block.js::getHash -- block not mined");
+            return 0;
+        }
+
+        return sha256(this.toStringForHashing(inputNonce));
     }
 
     confirmProofOfWork(){
@@ -78,6 +92,12 @@ module.exports = class Block{
     toStringForHashing(inputNonce){
         return (this.blockNum + this.minerPublicKey + this.timestamp + this.blockReward
             + this.numZeros + this.prevHash + this.inputNonce);
+    }
+
+    toStringForPrinting(){
+        return "Block num: " + this.blockNum + "\nminer: " + this.minerPublicKey + "\ntimestamp: "
+        + this.timestamp + "\nreward: " + this.blockReward + "\nnumZeros: " + this.numZeros +
+        "\nPrev Hash: " + this.prevHash + "\nNonce: " + this.nonce + "\nHash: " + this.getHash(); 
     }
 
     serialize(){
