@@ -5,7 +5,7 @@ class Blockchain {
         this.blocks = []
         this.myPublicKey = "myPublicKey1"
         this.blockReward = 50;
-        this.numZeros = 5;
+        this.numZeros = 3;
     }
 
     run(){        
@@ -22,7 +22,7 @@ class Blockchain {
         this.blocks = [];
         this.mineLatestBlock();
         this.printLatestBlock();
-        const serializedBlock = Block.serialize(blocks[0]);
+        const serializedBlock = Block.serialize(this.blocks[0]);
         this.blocks[0] = Block.deserialize(serializedBlock);
         this.printLatestBlock();
         this.mineLatestBlock();

@@ -20,7 +20,7 @@ module.exports = class Block{
     constructor(blockNum, minerPublicKey, timestamp, blockReward, numZeros, prevHash = 0){
         this.blockNum = blockNum;        
         this.minerPublicKey = minerPublicKey;
-        this.timestamp = timestamp;
+        this.timestamp = timestamp.toString();
         this.blockReward = blockReward
         this.numZeros = numZeros;
         
@@ -102,12 +102,18 @@ module.exports = class Block{
         "\nPrev Hash: " + this.prevHash + "\nNonce: " + this.nonce + "\nHash: " + this.getHash(); 
     }
 
-    static serialize(){
-        //TODO
+    static serialize(block){
+        return JSON.stringify(block);
     }
 
-    static unserialize(serializedBlock){
-        //TODO
+    static deserialize(blockJSON){        
+        const parsedBlock = JSON.parse(blockJSON);
+
+        const returnBlock = new Block(parsedBlock.blockNum, parsedBlock.minerPublicKey, parsedBlock.timestamp,
+            parsedBlock.blockReward, parsedBlock.numZeros, parsedBlock.prevHash);
+
+        returnBlock.nonce = parsedBlock.nonce;
+        return returnBlock;
     }
     
 }
