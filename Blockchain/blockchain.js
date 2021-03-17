@@ -18,7 +18,7 @@ class Blockchain {
         }
     }
 
-    testSerializing(){
+    testSerializingSingle(){
         this.blocks = [];
         this.mineLatestBlock();
         this.printLatestBlock();
@@ -27,6 +27,17 @@ class Blockchain {
         this.printLatestBlock();
         this.mineLatestBlock();
         this.printLatestBlock();
+    }
+
+    testSerializingMulti(numBlocks){
+        this.blocks = [];
+        for(let i = 0; i < numBlocks; i++){
+            this.mineLatestBlock();
+            this.printLatestBlock();
+            const serializedBlock = Block.serialize(this.blocks[i]);
+            this.blocks[i] = Block.deserialize(serializedBlock);
+            this.printLatestBlock();
+        }
     }
 
 
@@ -49,4 +60,4 @@ class Blockchain {
 }
 
 const blockchain = new Blockchain();
-blockchain.testSerializing();
+blockchain.testSerializingMulti(5);
