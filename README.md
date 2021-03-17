@@ -16,6 +16,7 @@ Later, we will show aggregate stats on the server such as total number of active
 We can launch two versions of each coin - one which does communicate with a central server to provide stats, and one that doesn't, as some might consider a blockchain in which all nodes communicate with a central server to be illegitimate.
 
 P2P initially discovery will be implemented in the beginning with a signaling server. However, this violates the distributed blockchain principle of not being reliant on a centralized server. Later, we will publish the addresses of well known full nodes on the Browsercoin page, in order to demonstrate this principle of P2P discovery. Ideally, this should be mirrored on many different websites controlled by different parties to mitigate the consequences of an attacker hacking the webpage.
+NOTE: The first PoC implementation of browsercoin will not use P2P at all - instead, it will use the signal hub to transfer all messages between clients. This is obviously completely against the decentralized, no single-point-of-failure principles of a distributed ledger. But getting P2P talking to each other and permeating messages to everyone else without infinite loopbacks is relatively complicated compared to everything else, so I'll implement that next.
 
 ----------
 WhitePaperCoin
@@ -38,6 +39,7 @@ TODO LIST:
 -Implement WhitePaperCoin
 -Make a nice UI in React
 -Deploy to the web
+-U
 -Add unit tests
 -Let users select the blockchain net that they want to participate in
 -Users can decide what nonce to start from instead of client choosing random one for them
