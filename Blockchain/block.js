@@ -102,11 +102,11 @@ module.exports = class Block{
         "\nPrev Hash: " + this.prevHash + "\nNonce: " + this.nonce + "\nHash: " + this.getHash(); 
     }
 
-    serialize(){
+    static serialize(){
         //TODO
     }
 
-    unserialize(serializedBlock){
+    static unserialize(serializedBlock){
         //TODO
     }
     

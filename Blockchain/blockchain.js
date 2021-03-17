@@ -18,6 +18,18 @@ class Blockchain {
         }
     }
 
+    testSerializing(){
+        this.blocks = [];
+        this.mineLatestBlock();
+        this.printLatestBlock();
+        const serializedBlock = Block.serialize(blocks[0]);
+        this.blocks[0] = Block.deserialize(serializedBlock);
+        this.printLatestBlock();
+        this.mineLatestBlock();
+        this.printLatestBlock();
+    }
+
+
     mineLatestBlock(blockNumber){
         const startTime = new Date();
         const prevHash = (this.blocks.length === 0 ? 0 : this.blocks[this.blocks.length-1].getHash());
@@ -37,4 +49,4 @@ class Blockchain {
 }
 
 const blockchain = new Blockchain();
-blockchain.run();
+blockchain.testSerializing();
