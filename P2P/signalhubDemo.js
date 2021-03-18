@@ -1,12 +1,8 @@
-//Get local host working
-
-const prompt = require('prompt-sync')({sigint: true});
 const Signalhub = require('signalhub')
 
 
 const hub = new Signalhub('basictest', [
-    // 'https://testsignalhub001.herokuapp.com/'
-  'http://localhost:8080/'  
+    'https://browsercoin.herokuapp.com/'
 ])
 
 hub.subscribe('channel1')
