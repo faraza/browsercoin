@@ -7,18 +7,16 @@ class Blockchain {
         this.blocks = []
         this.myPublicKey = "myPublicKey1"
         this.blockReward = 50;
-        this.numZeros = 6;
+        this.numZeros = 5;
     }
 
-    async run(){        
-        while(true){
-            const startTime = new Date(); 
-            await this.mineLatestBlock()            
-            const endTime = new Date();            
-            this.printLatestBlock();
-            console.log("*Block mining time: " + (endTime - startTime));
-        }
-    }
+    async runLatestLoop(){           
+        const startTime = new Date(); 
+        await this.mineLatestBlock()            
+        const endTime = new Date();            
+        this.printLatestBlock();
+        console.log("*Block mining time: " + (endTime - startTime));        
+    }    
 
     testSerializingSingle(){
         this.blocks = [];
@@ -46,11 +44,19 @@ class Blockchain {
         const startTime = new Date();
         const prevHash = (this.blocks.length === 0 ? 0 : this.blocks[this.blocks.length-1].getHash());
         this.currentBlock = new Block(this.blocks.length, this.myPublicKey, startTime, this.blockReward, this.numZeros, prevHash);        
-        await this.currentBlock.findNonce().then((nonce)=>{            
-            this.currentBlock.setNonce(nonce);
-            this.blocks.push(this.currentBlock);            
-        })         
+        await this.currentBlock.findNonce()
+            .then((nonce)=>{            
+                this.currentBlock.setNonce(nonce);
+                this.blocks.push(this.currentBlock);            
+            }).catch(()=>{
+                console.log("***Block Mining cancelled. Block number: ", this.currentBlock.blockNum);
+            })         
     }    
+
+    cancelMiningCurrentBlocK(){
+        if(this.currentBlock == null) return;
+        this.currentBlock.cancelFindNonce();
+    }
 
     printLatestBlock(){
         const latestBlock = this.blocks[this.blocks.length - 1]
@@ -77,6 +83,3 @@ class Blockchain {
         //TODO
     }
 }
-
-const bc = new Blockchain();
-bc.run();
