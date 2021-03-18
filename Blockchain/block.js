@@ -25,6 +25,7 @@ module.exports = class Block{
         this.numZeros = numZeros;
         
         this.prevHash = prevHash;
+        this.cancelToken = false;
     }
 
     /**
@@ -43,13 +44,23 @@ module.exports = class Block{
         this.nonce = nonce;
     }    
 
+    /**
+     * Doesn't directly cancel it but activates cancel token
+     */
+    cancelFindNonce(){
+        this.cancelToken = true;
+    }
+
     findNonce(startingNonce = 0){
         let curNonce = startingNonce;
-        
-        while(!this.isValidProofOfWork(curNonce)){             
-            curNonce++;                    
-        }
-        return curNonce;
+
+        return new Promise((resolve, reject) =>{
+            while(!this.isValidProofOfWork(curNonce)){             
+                curNonce++;                    
+                if(this.cancelToken) reject();
+            }
+            resolve(curNonce);
+        })                
     }
 
     isValidProofOfWork(inputNonce){        
