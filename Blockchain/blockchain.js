@@ -40,7 +40,6 @@ class Blockchain {
         }
     }
 
-
     mineLatestBlock(blockNumber){
         const startTime = new Date();
         const prevHash = (this.blocks.length === 0 ? 0 : this.blocks[this.blocks.length-1].getHash());
@@ -58,6 +57,3 @@ class Blockchain {
         //TODO
     }
 }
-
-const blockchain = new Blockchain();
-blockchain.testSerializingMulti(5);
