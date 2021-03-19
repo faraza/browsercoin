@@ -1,23 +1,21 @@
 const Block = require('./block')
+const { fork } = require('child_process');
 
-class Blockchain {
-    currentBlock;
+class Blockchain {    
 
     constructor(){        
         this.blocks = []
         this.myPublicKey = "myPublicKey1"
         this.blockReward = 50;
-        this.numZeros = 5;
+        this.numZeros = 3;
+        this.currentBlock;
+
+        this.miningWorker = fork('./miner'); 
+        this.miningWorker.on('findNonce', this.nonceFoundHandler);
+        this.miningStartTime;
     }
 
-    async runLatestLoop(){           
-        const startTime = new Date(); 
-        await this.mineLatestBlock()            
-        const endTime = new Date();            
-        this.printLatestBlock();
-        console.log("*Block mining time: " + (endTime - startTime));        
-    }    
-
+    //TODO: Fix this to work with worker thread
     testSerializingSingle(){
         this.blocks = [];
         this.mineLatestBlock();
@@ -29,6 +27,7 @@ class Blockchain {
         this.printLatestBlock();
     }
 
+    //TODO: Fix this to work with worker thread
     testSerializingMulti(numBlocks){
         this.blocks = [];
         for(let i = 0; i < numBlocks; i++){
@@ -40,22 +39,53 @@ class Blockchain {
         }
     }
 
-    async mineLatestBlock(){
-        const startTime = new Date();
+    runMiningLoop(){
+        console.log("mining loop start");
+        this.miningStartTime = new Date();
         const prevHash = (this.blocks.length === 0 ? 0 : this.blocks[this.blocks.length-1].getHash());
-        this.currentBlock = new Block(this.blocks.length, this.myPublicKey, startTime, this.blockReward, this.numZeros, prevHash);        
-        await this.currentBlock.findNonce()
-            .then((nonce)=>{            
-                this.currentBlock.setNonce(nonce);
-                this.blocks.push(this.currentBlock);            
-            }).catch(()=>{
-                console.log("***Block Mining cancelled. Block number: ", this.currentBlock.blockNum);
-            })         
-    }    
+        this.currentBlock = new Block(this.blocks.length, this.myPublicKey, this.miningStartTime, this.blockReward, this.numZeros, prevHash);        
+        // this.miningWorker.send(this.currentBlock);
+        const testMiningWorker = fork('./testChild');
+        testMiningWorker.on('findNonce', (nonce)=>{
+            console.log("Test mining worker found nonce! ", nonce);
+            testMiningWorker.kill();
+        })
+        testMiningWorker.send("test input");
+        console.log("mining loop end");
+    }
 
-    cancelMiningCurrentBlocK(){
-        if(this.currentBlock == null) return;
-        this.currentBlock.cancelFindNonce();
+    nonceFoundHandler(nonce){
+        console.log("nonce found handler start");
+        this.currentBlock.setNonce(nonce);
+        const blockWasValid = this.pushBlockToEndOfChain(this.currentBlock)        
+
+        const miningEndTime = new Date();
+        const totalMiningTime = miningEndTime - this.miningStartTime;
+        if(blockWasValid)
+            this.printLatestBlock();
+        else{
+            console.log("***ERROR - BLOCK WAS INVALID: " + this.currentBlock.toStringForPrinting());
+        }
+        console.log("*Block mining time: " + totalMiningTime);
+        
+        this.miningWorker.kill();        
+        this.runMiningLoop();
+    }
+
+    pushBlockToEndOfChain(block){
+        if(!block.isMined()) return false;
+        if(!block.confirmProofOfWork()) return false;
+
+        if(this.blocks.length == 0){
+            if(block.blockNum !== 0) return false;
+            this.blocks.length.push(block);
+            return true;
+        }
+
+        const prevBlock = this.blocks[this.blocks.length - 1];
+        if(prevBlock.getHash() !== block.prevHash) return false;
+        
+        this.blocks.push(block);
     }
 
     printLatestBlock(){
@@ -65,6 +95,7 @@ class Blockchain {
 
     addBlockFromPeer(block){
         if(!this.isValidNewBlock(block)) return false;
+        //TODO: Cancel current block mine
         //TODO: rewrite chain if other chain is longer        
         
         //TODO: implement
@@ -83,3 +114,10 @@ class Blockchain {
         //TODO
     }
 }
+
+const bc = new Blockchain();
+bc.runMiningLoop();
+
+setInterval(()=>{
+    console.log("Keeping this thing alive. Current array length: " + bc.blocks.length);
+}, 1000);

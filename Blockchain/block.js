@@ -25,7 +25,6 @@ module.exports = class Block{
         this.numZeros = numZeros;
         
         this.prevHash = prevHash;
-        this.cancelToken = false;
     }
 
     /**
@@ -45,19 +44,16 @@ module.exports = class Block{
     }    
 
     /**
-     * Doesn't directly cancel it but activates cancel token
+     * Run this in a child process otherwise it WILL block the main thread!
+     * @param {*} startingNonce 
+     * @returns 
      */
-    cancelFindNonce(){
-        this.cancelToken = true;
-    }
-
     findNonce(startingNonce = 0){
         let curNonce = startingNonce;
 
         return new Promise((resolve, reject) =>{
             while(!this.isValidProofOfWork(curNonce)){             
-                curNonce++;                    
-                if(this.cancelToken) reject();
+                curNonce++;                                    
             }
             resolve(curNonce);
         })                
