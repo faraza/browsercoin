@@ -80,6 +80,7 @@ class Blockchain {
         if(prevBlock.getHash() !== block.prevHash) return false;
         
         this.blocks.push(block);
+        return true;
     }
 
     printLatestBlock(){
