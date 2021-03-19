@@ -11,7 +11,7 @@ class Blockchain {
         this.currentBlock;
 
         this.miningWorker = fork('./miner'); 
-        this.miningWorker.on('findNonce', this.nonceFoundHandler);
+        this.miningWorker.on('message', this.nonceFoundHandler.bind(this));
         this.miningStartTime;
     }
 
@@ -44,14 +44,15 @@ class Blockchain {
         this.miningStartTime = new Date();
         const prevHash = (this.blocks.length === 0 ? 0 : this.blocks[this.blocks.length-1].getHash());
         this.currentBlock = new Block(this.blocks.length, this.myPublicKey, this.miningStartTime, this.blockReward, this.numZeros, prevHash);        
-        // this.miningWorker.send(this.currentBlock);
-        const testMiningWorker = fork('./testChild');
-        testMiningWorker.on('findNonce', (nonce)=>{
-            console.log("Test mining worker found nonce! ", nonce);
-            testMiningWorker.kill();
-        })
-        testMiningWorker.send("test input");
-        console.log("mining loop end");
+        console.log("run mining loop. ")
+        this.miningWorker.send(this.currentBlock);
+        // const testMiningWorker = fork('./miner');
+        // testMiningWorker.on('message', (nonce)=>{
+        //     console.log("Test mining worker found nonce! ", nonce);
+        //     testMiningWorker.kill();
+        // })
+        // testMiningWorker.send("test input");
+        // console.log("mining loop end");
     }
 
     nonceFoundHandler(nonce){
