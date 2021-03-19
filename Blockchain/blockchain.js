@@ -7,7 +7,7 @@ class Blockchain {
         this.blocks = []
         this.myPublicKey = "myPublicKey1"
         this.blockReward = 50;
-        this.numZeros = 3;
+        this.numZeros = 5;
         this.currentBlock;
 
         this.miningWorker = fork('./miner'); 
@@ -62,7 +62,7 @@ class Blockchain {
         }
         console.log("*Block mining time: " + totalMiningTime);
         
-        this.miningWorker.kill();        
+        // this.miningWorker.kill();        
         this.runMiningLoop();
     }
 
@@ -99,7 +99,7 @@ class Blockchain {
 
     isValidNewBlock(block){
         return true;
-        //TODO
+        //TODO: Refactor out from pushBlockToEndOfChain
     }
 
 
