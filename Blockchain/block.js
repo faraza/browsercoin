@@ -50,13 +50,10 @@ module.exports = class Block{
      */
     findNonce(startingNonce = 0){
         let curNonce = startingNonce;
-
-        return new Promise((resolve, reject) =>{
-            while(!this.isValidProofOfWork(curNonce)){             
-                curNonce++;                                    
-            }
-            resolve(curNonce);
-        })                
+        while(!this.isValidProofOfWork(curNonce)){             
+            curNonce++;                                    
+        } 
+        return curNonce;               
     }
 
     isValidProofOfWork(inputNonce){        
@@ -109,8 +106,8 @@ module.exports = class Block{
         "\nPrev Hash: " + this.prevHash + "\nNonce: " + this.nonce + "\nHash: " + this.getHash(); 
     }
 
-    static serialize(block){
-        return JSON.stringify(block);
+    serialize(){
+        return JSON.stringify(this);
     }
 
     static deserialize(blockJSON){        

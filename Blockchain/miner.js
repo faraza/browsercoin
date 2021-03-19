@@ -5,10 +5,10 @@
 
 const Block = require('./block')
 
-process.on('message', (block) =>{    
-    console.log("Miner.js::findNonce start");
-    // const nonce = block.findNonce();   
-    const nonce = 100;
-    console.log("Miner.js::findNonce found");
+process.on('message', (serializedBlock) =>{    
+    console.log("miner::start")
+    const block = Block.deserialize(serializedBlock);    
+    const nonce = block.findNonce();    
+    console.log("Miner.js. Nonce: " + nonce)    
     process.send(nonce);
 })

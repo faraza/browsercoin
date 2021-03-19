@@ -45,18 +45,11 @@ class Blockchain {
         const prevHash = (this.blocks.length === 0 ? 0 : this.blocks[this.blocks.length-1].getHash());
         this.currentBlock = new Block(this.blocks.length, this.myPublicKey, this.miningStartTime, this.blockReward, this.numZeros, prevHash);        
         console.log("run mining loop. ")
-        this.miningWorker.send(this.currentBlock);
-        // const testMiningWorker = fork('./miner');
-        // testMiningWorker.on('message', (nonce)=>{
-        //     console.log("Test mining worker found nonce! ", nonce);
-        //     testMiningWorker.kill();
-        // })
-        // testMiningWorker.send("test input");
-        // console.log("mining loop end");
+        this.miningWorker.send(this.currentBlock.serialize());
     }
 
     nonceFoundHandler(nonce){
-        console.log("nonce found handler start");
+        console.log("nonce found handler start. Nonce: " , nonce);
         this.currentBlock.setNonce(nonce);
         const blockWasValid = this.pushBlockToEndOfChain(this.currentBlock)        
 
@@ -79,7 +72,7 @@ class Blockchain {
 
         if(this.blocks.length == 0){
             if(block.blockNum !== 0) return false;
-            this.blocks.length.push(block);
+            this.blocks.push(block);
             return true;
         }
 
