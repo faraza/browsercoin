@@ -1,19 +1,25 @@
 const Networking = require('./Networking/networkmanager');
+const Blockchain = require('./Blockchain/blockchain')
+const {EventEmitter} = require('events')
 
 
+const networkEvents = new EventEmitter();
+const network = new Networking(networkEvents);
+networkEvents.on('newBlock', ()=>{
+    console.log("Index.js::New block received");
+})
 
+const blockchainEvents = new EventEmitter();
+const blockchain = new Blockchain(blockchainEvents);
+blockchainEvents.on('mined', ()=>{
+    console.log("Index.js::New block mined");
+})
+blockchain.runMiningLoop();
 
-
-
-function networkingBasicTest(){
-    let network = new Networking((message)=>{
-        console.log("Message Received: ", message)
-    })
-
-    let messageNum = 0;
-    setInterval(()=>{
-        network.sendMessage(messageNum++)
-    }, 2000)
+function newBlockMined(){
+    //TODO
 }
 
-networkingBasicTest();
+function newBlockReceived(){
+    //TODO
+}

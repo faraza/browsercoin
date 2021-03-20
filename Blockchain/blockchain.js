@@ -1,9 +1,10 @@
 const Block = require('./block')
 const { fork } = require('child_process');
+const {EventEmitter} = require('events')
 
-class Blockchain {    
+module.exports = class Blockchain {    
 
-    constructor(){        
+    constructor(eventEmitter){        
         this.blocks = []
         this.myPublicKey = "myPublicKey1"
         this.blockReward = 50;
@@ -11,6 +12,7 @@ class Blockchain {
         this.currentBlock;
 
         this.miningStartTime;
+        this.eventEmitter = eventEmitter;
     }
 
     setupMiningWorker(){
@@ -35,8 +37,10 @@ class Blockchain {
 
         const miningEndTime = new Date();
         const totalMiningTime = miningEndTime - this.miningStartTime;
-        if(blockWasValid)
-            this.printLatestBlock();
+        if(blockWasValid){
+            this.printLatestBlock();   
+            this.eventEmitter.emit('mined')
+        }
         else{
             console.log("***ERROR - BLOCK WAS INVALID: " + this.currentBlock.toStringForPrinting());
         }
@@ -47,17 +51,7 @@ class Blockchain {
     }
 
     pushBlockToEndOfChain(block){
-        if(!block.isMined()) return false;
-        if(!block.confirmProofOfWork()) return false;
-
-        if(this.blocks.length == 0){
-            if(block.blockNum !== 0) return false;
-            this.blocks.push(block);
-            return true;
-        }
-
-        const prevBlock = this.blocks[this.blocks.length - 1];
-        if(prevBlock.getHash() !== block.prevHash) return false;
+        if(!this.isValidNewBlock(block)) return false;
         
         this.blocks.push(block);
         return true;
@@ -70,17 +64,27 @@ class Blockchain {
 
     addBlockFromPeer(block){
         if(!this.isValidNewBlock(block)) return false;
-        //TODO: Cancel current block mine
-        //TODO: rewrite chain if other chain is longer        
-        
-        //TODO: implement
+        this.killMiningWorker();
+        this.pushBlockToEndOfChain(block) 
+        return true;       
     }
 
     //TODO: Handle other blockchain being multiple blocks ahead
+        //Don't accept until the other block is 3 ahead of you
 
     isValidNewBlock(block){
-        return true;
-        //TODO: Refactor out from pushBlockToEndOfChain
+        if(!block.isMined()) return false;
+        if(!block.confirmProofOfWork()) return false;        
+
+        if(this.blocks.length == 0){
+            if(block.blockNum !== 0) return false;            
+            else return true;
+        }
+
+        const prevBlock = this.blocks[this.blocks.length - 1];
+        if(prevBlock.getHash() !== block.prevHash) return false;
+                
+        return true;        
     }
 
     killMiningWorker(){
