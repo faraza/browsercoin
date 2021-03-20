@@ -8,9 +8,12 @@ const networkEvents = new EventEmitter();
 const network = new Networking(networkEvents);
 
 networkEvents.on('blockReceived', (serializedBlock)=>{
-    console.log("Block received. Raw text: ", serializedBlock)
     const newBlock = Block.deserialize(serializedBlock)
     console.log("Index.js::New block received. Block num: ", newBlock.blockNum, " Miner: ", newBlock.minerPublicKey);
+    if(blockchain.addBlockFromPeer(newBlock))
+        console.log("!!! New block added over network !!!");
+    else
+        console.log("!!! New Block rejected from network !!!")
 })
 
 const blockchainEvents = new EventEmitter();

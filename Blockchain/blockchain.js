@@ -9,7 +9,7 @@ module.exports = class Blockchain {
         this.blocks = []
         this.myPublicKey = "myPublicKey" + randomInt(10000);
         this.blockReward = 50;
-        this.numZeros = 5;
+        this.numZeros = 3;
         this.currentBlock;
 
         this.miningStartTime;
@@ -72,6 +72,7 @@ module.exports = class Blockchain {
         if(!this.isValidNewBlock(block)) return false;
         this.killMiningWorker();
         this.pushBlockToEndOfChain(block) 
+        this.runMiningLoop();
         return true;       
     }
 
@@ -80,7 +81,8 @@ module.exports = class Blockchain {
 
     isValidNewBlock(block){
         if(!block.isMined()) return false;
-        if(!block.confirmProofOfWork()) return false;        
+        if(!block.confirmProofOfWork()) return false; 
+        if(!block.blockNum == this.blocks.length) return false;
 
         if(this.blocks.length == 0){
             if(block.blockNum !== 0) return false;            

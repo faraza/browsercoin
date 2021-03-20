@@ -1,5 +1,6 @@
 
 var sha256 = require('js-sha256');
+const randomInt = require('random-int');
 
 /**
  * Block will consist of:
@@ -42,22 +43,33 @@ module.exports = class Block{
     setNonce(nonce){
         this.nonce = nonce;
     }    
-
+    
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+      
     /**
-     * Run this in a child process otherwise it WILL block the main thread!
-     * @param {*} startingNonce 
+     * Run this in a child process otherwise it WILL block the main thread!     
      * @returns 
      */
-    findNonce(startingNonce = 0){
-        let curNonce = startingNonce;
+    async findNonce(){
+        let curNonce = randomInt(99999999);
         while(!this.isValidProofOfWork(curNonce)){             
-            curNonce++;                                    
+            curNonce++; 
+            await this.sleep(10) ;                                
         } 
         return curNonce;               
     }
 
+    sleep(ms) {
+        return new Promise((resolve) => {
+          setTimeout(resolve, ms);
+        });
+      }  
+
     isValidProofOfWork(inputNonce){        
         const hash = sha256(this.toStringForHashing(inputNonce.toString()));
+        // console.log("Is valid proof of work. Nonce: " , inputNonce, " Hash: ", hash)
         return this.doesStringHaveLeadingZeros(hash)        
     }
 
