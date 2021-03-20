@@ -10,8 +10,6 @@ class Blockchain {
         this.numZeros = 5;
         this.currentBlock;
 
-        this.miningWorker = fork('./miner'); 
-        this.miningWorker.on('message', this.nonceFoundHandler.bind(this));
         this.miningStartTime;
     }
 
@@ -39,12 +37,18 @@ class Blockchain {
         }
     }
 
+    setupMiningWorker(){
+        this.miningWorker = fork('./miner'); 
+        this.miningWorker.on('message', this.nonceFoundHandler.bind(this));
+    }
+
     runMiningLoop(){
         console.log("mining loop start");
         this.miningStartTime = new Date();
         const prevHash = (this.blocks.length === 0 ? 0 : this.blocks[this.blocks.length-1].getHash());
         this.currentBlock = new Block(this.blocks.length, this.myPublicKey, this.miningStartTime, this.blockReward, this.numZeros, prevHash);        
         console.log("run mining loop. ")
+        this.setupMiningWorker();
         this.miningWorker.send(this.currentBlock.serialize());
     }
 
@@ -62,7 +66,7 @@ class Blockchain {
         }
         console.log("*Block mining time: " + totalMiningTime);
         
-        // this.miningWorker.kill();        
+        this.killMiningWorker();
         this.runMiningLoop();
     }
 
@@ -103,6 +107,9 @@ class Blockchain {
         //TODO: Refactor out from pushBlockToEndOfChain
     }
 
+    killMiningWorker(){
+        this.miningWorker.kill();        
+    }
 
 
     getTotalWalletSize(){
@@ -116,3 +123,13 @@ bc.runMiningLoop();
 setInterval(()=>{
     console.log("Keeping this thing alive. Current array length: " + bc.blocks.length);
 }, 1000);
+
+setTimeout(()=>{
+    console.log("killing current miner. Should stop mining after this")
+    bc.killMiningWorker();
+}, 5000);
+
+setTimeout(()=>{
+    console.log("Reviving miner. Should start mining again")
+    bc.runMiningLoop();
+}, 20000);
