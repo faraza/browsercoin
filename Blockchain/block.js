@@ -56,7 +56,7 @@ module.exports = class Block{
         let curNonce = randomInt(99999999);
         while(!this.isValidProofOfWork(curNonce)){             
             curNonce++; 
-            await this.sleep(10) ;                                
+            // await this.sleep(1) ;                                
         } 
         return curNonce;               
     }
@@ -67,6 +67,11 @@ module.exports = class Block{
         });
       }  
 
+      /**
+       * NOTE: On my M1 mac it takes ~1.7ms on average to run one sha256
+       * @param {*} inputNonce 
+       * @returns 
+       */
     isValidProofOfWork(inputNonce){        
         const hash = sha256(this.toStringForHashing(inputNonce.toString()));
         // console.log("Is valid proof of work. Nonce: " , inputNonce, " Hash: ", hash)
