@@ -13,30 +13,6 @@ class Blockchain {
         this.miningStartTime;
     }
 
-    //TODO: Fix this to work with worker thread
-    testSerializingSingle(){
-        this.blocks = [];
-        this.mineLatestBlock();
-        this.printLatestBlock();
-        const serializedBlock = Block.serialize(this.blocks[0]);
-        this.blocks[0] = Block.deserialize(serializedBlock);
-        this.printLatestBlock();
-        this.mineLatestBlock();
-        this.printLatestBlock();
-    }
-
-    //TODO: Fix this to work with worker thread
-    testSerializingMulti(numBlocks){
-        this.blocks = [];
-        for(let i = 0; i < numBlocks; i++){
-            this.mineLatestBlock();
-            this.printLatestBlock();
-            const serializedBlock = Block.serialize(this.blocks[i]);
-            this.blocks[i] = Block.deserialize(serializedBlock);
-            this.printLatestBlock();
-        }
-    }
-
     setupMiningWorker(){
         this.miningWorker = fork('./miner'); 
         this.miningWorker.on('message', this.nonceFoundHandler.bind(this));
@@ -116,20 +92,3 @@ class Blockchain {
         //TODO
     }
 }
-
-const bc = new Blockchain();
-bc.runMiningLoop();
-
-setInterval(()=>{
-    console.log("Keeping this thing alive. Current array length: " + bc.blocks.length);
-}, 1000);
-
-setTimeout(()=>{
-    console.log("killing current miner. Should stop mining after this")
-    bc.killMiningWorker();
-}, 5000);
-
-setTimeout(()=>{
-    console.log("Reviving miner. Should start mining again")
-    bc.runMiningLoop();
-}, 20000);
