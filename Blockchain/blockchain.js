@@ -15,8 +15,12 @@ module.exports = class Blockchain {
         this.eventEmitter = eventEmitter;
     }
 
+    /**
+     * TODO: This will give an error if the method is not run from
+     * the browsercoin working directory!
+     */
     setupMiningWorker(){
-        this.miningWorker = fork('./miner'); 
+        this.miningWorker = fork('./Blockchain/miner'); 
         this.miningWorker.on('message', this.nonceFoundHandler.bind(this));
     }
 
@@ -38,8 +42,8 @@ module.exports = class Blockchain {
         const miningEndTime = new Date();
         const totalMiningTime = miningEndTime - this.miningStartTime;
         if(blockWasValid){
-            this.printLatestBlock();   
-            this.eventEmitter.emit('mined')
+            // this.printLatestBlock();   
+            this.eventEmitter.emit('mined', this.currentBlock.serialize());
         }
         else{
             console.log("***ERROR - BLOCK WAS INVALID: " + this.currentBlock.toStringForPrinting());

@@ -12,14 +12,6 @@ networkEvents.on('newBlock', ()=>{
 const blockchainEvents = new EventEmitter();
 const blockchain = new Blockchain(blockchainEvents);
 blockchainEvents.on('mined', ()=>{
-    console.log("Index.js::New block mined");
+    console.log("\n\n\n\nIndex.js::New block mined");
 })
 blockchain.runMiningLoop();
-
-function newBlockMined(){
-    //TODO
-}
-
-function newBlockReceived(){
-    //TODO
-}
