@@ -1,18 +1,20 @@
 const Block = require('./block')
 const { fork } = require('child_process');
 const {EventEmitter} = require('events')
+const randomInt = require('random-int');
 
 module.exports = class Blockchain {    
 
     constructor(eventEmitter){        
         this.blocks = []
-        this.myPublicKey = "myPublicKey1"
+        this.myPublicKey = "myPublicKey" + randomInt(10000);
         this.blockReward = 50;
         this.numZeros = 5;
         this.currentBlock;
 
         this.miningStartTime;
         this.eventEmitter = eventEmitter;
+        console.log("*********BLOCKCHAIN PUBLIC KEY: ", this.myPublicKey);
     }
 
     /**

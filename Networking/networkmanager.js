@@ -17,16 +17,22 @@ module.exports = class NetworkManager{
 
         this.hub.subscribe(this.CHANNEL)
         .on('data', (message)=>{
-            processMessageType(message);
+            this.processMessageType(message);
         })        
     }
 
     processMessageType(message){
         //TODO: event emitter
+        
+        this.eventEmitter.emit('blockReceived', message);
     }
 
     sendMessage(message){
         this.hub.broadcast(this.CHANNEL, message);
+    }
+
+    sendSerializedBlock(serializedBlock){
+        this.sendMessage(serializedBlock); //TODO: give it a key
     }
 
 
