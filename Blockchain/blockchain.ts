@@ -4,7 +4,7 @@ const { fork } = require('child_process');
 const randomInt = require('random-int');
 
 
-module.exports = class Blockchain {    
+export class Blockchain {    
         
     blocks: Block[]
     myPublicKey: string

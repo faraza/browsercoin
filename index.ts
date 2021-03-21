@@ -1,7 +1,7 @@
-const Networking = require('./Networking/networkmanager');
-const Blockchain = require('./Blockchain/blockchain')
-const Block = require('./Blockchain/block')
-const {EventEmitter} = require('events')
+import {NetworkManager as Networking} from './Networking/networkmanager';
+import {Blockchain} from './Blockchain/blockchain'
+import {Block} from './Blockchain/block'
+import {EventEmitter} from 'events'
 
 
 const networkEvents = new EventEmitter();

@@ -2,7 +2,7 @@ import EventEmitter from "node:events"
 
 const {SignalHub} = require('signalhub')
 
-module.exports = class NetworkManager{    
+export class NetworkManager{    
     eventEmitter: EventEmitter
     hub: typeof SignalHub
     
