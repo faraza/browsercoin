@@ -1,6 +1,6 @@
-import EventEmitter from "node:events"
+import {EventEmitter} from "node:events"
 
-const {SignalHub} = require('signalhub')
+const SignalHub = require('signalhub')
 
 export class NetworkManager{    
     eventEmitter: EventEmitter

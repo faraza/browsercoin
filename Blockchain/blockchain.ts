@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events';
+import {EventEmitter} from 'node:events';
 import {Block} from './block'
 const { fork } = require('child_process');
 const randomInt = require('random-int');
@@ -29,7 +29,7 @@ export class Blockchain {
      * the browsercoin working directory!
      */
     setupMiningWorker(): void{
-        this.miningWorker = fork('./Blockchain/miner'); 
+        this.miningWorker = fork('./Blockchain/miner.js'); 
         this.miningWorker.on('message', this.nonceFoundHandler.bind(this));
     }
 
