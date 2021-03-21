@@ -1,10 +1,14 @@
-const Signalhub = require('signalhub')
-const {EventEmitter} = require('events')
+import EventEmitter from "node:events"
+
+const {SignalHub} = require('signalhub')
 
 module.exports = class NetworkManager{    
-    APPNAME = 'browsercoin'
-    SERVERENDPOINT = 'https://browsercoin.herokuapp.com/'
-    CHANNEL = 'channel1'
+    eventEmitter: EventEmitter
+    hub: typeof SignalHub
+    
+    readonly APPNAME = 'browsercoin'
+    readonly SERVERENDPOINT = 'https://browsercoin.herokuapp.com/'
+    readonly CHANNEL = 'channel1'
     
     constructor(eventEmitter){
         this.eventEmitter = eventEmitter;
@@ -12,8 +16,9 @@ module.exports = class NetworkManager{
     }
 
     setupSignalhub(){
-        this.hub = new Signalhub(this.APPNAME,
+        this.hub = new SignalHub(this.APPNAME,
         [this.SERVERENDPOINT])
+        
 
         this.hub.subscribe(this.CHANNEL)
         .on('data', (message)=>{
