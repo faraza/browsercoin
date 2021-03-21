@@ -9,7 +9,7 @@ module.exports = class Blockchain {
         this.blocks = []
         this.myPublicKey = "myPublicKey" + randomInt(10000);
         this.blockReward = 50;
-        this.numZeros = 6;
+        this.numZeros = 3;
         this.currentBlock;
 
         this.miningStartTime;
