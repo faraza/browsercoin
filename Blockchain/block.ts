@@ -16,7 +16,7 @@ const randomInt = require('random-int');
  * Transactions (TODO Later)
  */
 
-module.exports = class Block{    
+export class Block{    
     blockNum: number
     minerPublicKey: string
     timestamp: string
