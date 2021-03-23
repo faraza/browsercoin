@@ -47,6 +47,14 @@ export class NetworkManager{
         //TODO
     }
 
+    requestLastTenBlocks(peer){
+        //TODO
+    }
+
+    requestFullBlockchain(peer){
+        //TODO
+    }
+
     sendSerializedBlock(serializedBlock){
         this.sendMessage(serializedBlock);
     }

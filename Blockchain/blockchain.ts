@@ -24,6 +24,22 @@ export class Blockchain {
         console.log("*********BLOCKCHAIN PUBLIC KEY: ", this.myPublicKey);
     }
 
+    getLast3BlocksSerialized(){
+        //TODO
+    }
+
+    getLast10BlockSerialized(){
+        //TODO
+    }
+
+    getFullChainSerialized(){
+        //TODO
+    }
+
+    addMultipleBlocksFromPeer(multipleBlocks: string){
+        //TODO
+    }
+
     /**
      * TODO: This will give an error if the method is not run from
      * the browsercoin working directory!
@@ -31,7 +47,7 @@ export class Blockchain {
     setupMiningWorker(): void{
         this.miningWorker = fork('./Blockchain/miner.js'); 
         this.miningWorker.on('message', this.nonceFoundHandler.bind(this));
-    }
+    }    
 
     runMiningLoop(): void{
         console.log("mining loop start");
@@ -45,7 +61,7 @@ export class Blockchain {
         this.miningWorker.send(this.currentBlock.serialize());
     }
 
-    nonceFoundHandler(nonce): void{
+    nonceFoundHandler(nonce: number): void{
         console.log("nonce found handler start. Nonce: " , nonce);
         this.currentBlock.setNonce(nonce);
         const blockWasValid = this.pushBlockToEndOfChain(this.currentBlock)        
@@ -53,7 +69,6 @@ export class Blockchain {
         const miningEndTime = new Date();
         const totalMiningTime = (<any>miningEndTime - <any>this.miningStartTime);
         if(blockWasValid){
-            // this.printLatestBlock();   
             this.eventEmitter.emit('mined', this.currentBlock.serialize());
         }
         else{
@@ -65,7 +80,7 @@ export class Blockchain {
         this.runMiningLoop();
     }
 
-    pushBlockToEndOfChain(block): boolean{
+    pushBlockToEndOfChain(block: Block): boolean{
         if(!this.isValidNewBlock(block)) return false;
         
         this.blocks.push(block);
@@ -77,7 +92,7 @@ export class Blockchain {
         console.log("\n***New block mined! " + latestBlock.toStringForPrinting());
     }
 
-    addBlockFromPeer(block): boolean{
+    addBlockFromPeer(block: Block): boolean{
         if(!this.isValidNewBlock(block)) return false;
         this.killMiningWorker();
         this.pushBlockToEndOfChain(block) 
