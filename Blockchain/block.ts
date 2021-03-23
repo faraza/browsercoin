@@ -35,18 +35,6 @@ export class Block{
         this.prevHash = blockInfo.prevHash
     }
 
-    /**
-     * 
-     * @returns Doesn't confirm proof of work - just checks that it has a nonce (by default, nonce is null)
-     */
-    isMined(): boolean{
-        return (this.nonce != null);        
-    }
-
-    resetToUnmined(): void{
-        this.nonce = null;
-    }
-
     setNonce(nonce): void{
         this.nonce = nonce;
     }    
@@ -55,6 +43,15 @@ export class Block{
         return new Promise(resolve => setTimeout(resolve, ms));
     }
       
+    serializeBlockArray(blockArray: Block []){
+        //TODO
+    }
+
+    deserializeBlockArray(serializedBlockArray: string): Block[] {
+        //TODO
+        return []
+    }
+
     /**
      * Run this in a child process otherwise it WILL block the main thread!     
      * @returns 
@@ -110,11 +107,7 @@ export class Block{
     isGenesisBlock(): boolean{
         return (this.blockNum === 0);
     }
-    
-    /**
-     * 
-     * @param {Not necessary if block has already been mined, because then it will use its existing nonce} inputNonce 
-     */
+        
     toStringForHashing(inputNonce: number): string{
         return (this.blockNum + this.minerPublicKey + this.timestamp + this.blockReward
             + this.numZeros + this.prevHash + inputNonce);
@@ -131,13 +124,7 @@ export class Block{
     }
 
     static deserialize(blockJSON){        
-        const parsedBlock = JSON.parse(blockJSON);
-
-        const returnBlock = new Block({blockNum: parsedBlock.blockNum, minerPublicKey: parsedBlock.minerPublicKey,
-        timestamp: parsedBlock.timestamp, blockReward: parsedBlock.blockReward, numZeros: parsedBlock.numZeros, prevHash: parsedBlock.prevHash})  
-
-        returnBlock.nonce = parsedBlock.nonce;
-        return returnBlock;
+        return JSON.parse(blockJSON);
     }
     
 }
