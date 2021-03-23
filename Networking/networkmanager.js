@@ -2,31 +2,36 @@
 exports.__esModule = true;
 exports.NetworkManager = void 0;
 var SignalHub = require('signalhub');
+var Swarm = require('webrtc-swarm');
 var NetworkManager = /** @class */ (function () {
     function NetworkManager(eventEmitter) {
-        this.APPNAME = 'browsercoin';
         this.SERVERENDPOINT = 'https://browsercoin.herokuapp.com/';
-        this.CHANNEL = 'channel1';
         this.eventEmitter = eventEmitter;
-        this.setupSignalhub();
+        var coinName = "farazCoin";
+        this.connectToSwarm(coinName);
     }
-    NetworkManager.prototype.setupSignalhub = function () {
+    NetworkManager.prototype.connectToSwarm = function (coinName) {
         var _this = this;
-        this.hub = new SignalHub(this.APPNAME, [this.SERVERENDPOINT]);
-        this.hub.subscribe(this.CHANNEL)
-            .on('data', function (message) {
-            _this.processMessageType(message);
+        var hub = new SignalHub(coinName, [this.SERVERENDPOINT]);
+        this.swarm = (Swarm.WEBRTC_SUPPORT) ? Swarm(hub) : Swarm(hub, { wrtc: require('wrtc') });
+        this.swarm.on('connect', function (peer, id) {
+            console.log("Connected to peer: ", id);
+            console.log("Total peers: " + _this.swarm.peers.length);
+        });
+        this.swarm.on('disconnect', function (peer, id) {
+            console.log("Disconnected from peer: ", id);
+            console.log("Total peers: ", _this.swarm.peers.length);
         });
     };
     NetworkManager.prototype.processMessageType = function (message) {
-        //TODO: event emitter
-        this.eventEmitter.emit('blockReceived', message);
+        //TODO
+        // this.eventEmitter.emit('blockReceived', message);
     };
     NetworkManager.prototype.sendMessage = function (message) {
-        this.hub.broadcast(this.CHANNEL, message);
+        //TODO
     };
     NetworkManager.prototype.sendSerializedBlock = function (serializedBlock) {
-        this.sendMessage(serializedBlock); //TODO: give it a key
+        this.sendMessage(serializedBlock);
     };
     return NetworkManager;
 }());
