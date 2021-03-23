@@ -123,8 +123,14 @@ export class Block{
         return JSON.stringify(this);
     }
 
-    static deserialize(blockJSON){        
-        return JSON.parse(blockJSON);
+    static deserialize(blockJSON){     
+        const parsedBlock = JSON.parse(blockJSON);
+
+        const returnBlock = new Block({blockNum: parsedBlock.blockNum, minerPublicKey: parsedBlock.minerPublicKey,
+        timestamp: parsedBlock.timestamp, blockReward: parsedBlock.blockReward, numZeros: parsedBlock.numZeros, prevHash: parsedBlock.prevHash})  
+
+        returnBlock.nonce = parsedBlock.nonce;
+        return returnBlock;           
     }
     
 }

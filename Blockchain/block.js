@@ -61,21 +61,18 @@ var Block = /** @class */ (function () {
         this.numZeros = blockInfo.numZeros;
         this.prevHash = blockInfo.prevHash;
     }
-    /**
-     *
-     * @returns Doesn't confirm proof of work - just checks that it has a nonce (by default, nonce is null)
-     */
-    Block.prototype.isMined = function () {
-        return (this.nonce != null);
-    };
-    Block.prototype.resetToUnmined = function () {
-        this.nonce = null;
-    };
     Block.prototype.setNonce = function (nonce) {
         this.nonce = nonce;
     };
     Block.prototype.sleep = function (ms) {
         return new Promise(function (resolve) { return setTimeout(resolve, ms); });
+    };
+    Block.prototype.serializeBlockArray = function (blockArray) {
+        //TODO
+    };
+    Block.prototype.deserializeBlockArray = function (serializedBlockArray) {
+        //TODO
+        return [];
     };
     /**
      * Run this in a child process otherwise it WILL block the main thread!
@@ -138,10 +135,6 @@ var Block = /** @class */ (function () {
     Block.prototype.isGenesisBlock = function () {
         return (this.blockNum === 0);
     };
-    /**
-     *
-     * @param {Not necessary if block has already been mined, because then it will use its existing nonce} inputNonce
-     */
     Block.prototype.toStringForHashing = function (inputNonce) {
         return (this.blockNum + this.minerPublicKey + this.timestamp + this.blockReward
             + this.numZeros + this.prevHash + inputNonce);

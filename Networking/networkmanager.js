@@ -27,17 +27,19 @@ var NetworkManager = /** @class */ (function () {
         });
     };
     NetworkManager.prototype.processMessageType = function (message, peer) {
-        //TODO
-        this.eventEmitter.emit('blockReceived', message);
+        //TODO: Parse message type
+        //If message is blockchain requested
+        // this.eventEmitter.emit('fullBlockchainRequested', peer)
+        //Else    
+        this.eventEmitter.emit('blocksReceived', message);
     };
-    NetworkManager.prototype.sendMessage = function (message) {
+    NetworkManager.prototype.sendMessageToAllPeers = function (message) {
         this.swarm.peers.forEach(function (peer) {
             peer.send(message);
         });
-        //TODO
     };
-    NetworkManager.prototype.sendSerializedBlock = function (serializedBlock) {
-        this.sendMessage(serializedBlock);
+    NetworkManager.prototype.sendSerializedBlocks = function (serializedBlocks) {
+        this.sendMessageToAllPeers(serializedBlocks);
     };
     return NetworkManager;
 }());

@@ -8,19 +8,15 @@ import './Blockchain/miner'
 const networkEvents = new EventEmitter();
 const network = new Networking(networkEvents);
 
-networkEvents.on('blockReceived', (serializedBlock)=>{
-    const newBlock = Block.deserialize(serializedBlock)
-    console.log("Index.js::New block received. Block num: ", newBlock.blockNum, " Miner: ", newBlock.minerPublicKey);
-    if(blockchain.addBlockFromPeer(newBlock))
-        console.log("!!! New block added over network !!!");
-    else
-        console.log("!!! New Block rejected from network !!!")
+networkEvents.on('blocksReceived', (serializedBlocks)=>{
+    console.log("$$$$$Blocks Received over network. Message: ", serializedBlocks);
+    //TODO: Convert to 
 })
 
 const blockchainEvents = new EventEmitter();
 const blockchain = new Blockchain(blockchainEvents);
-blockchainEvents.on('mined', (serializedBlock)=>{
+blockchainEvents.on('mined', ()=>{
     console.log("\n\n\n\nIndex.js::New block mined");
-    network.sendSerializedBlock(serializedBlock);
+    network.sendSerializedBlocks(JSON.stringify(blockchain.getLast5Blocks()));    
 })
 blockchain.runMiningLoop();

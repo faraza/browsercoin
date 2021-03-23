@@ -24,20 +24,16 @@ export class Blockchain {
         console.log("*********BLOCKCHAIN PUBLIC KEY: ", this.myPublicKey);
     }
 
-    getLast3BlocksSerialized(){
-        //TODO
-    }
+    /**
+     * Returns less than 5 if the current blockchain is less than 5
+     */
+    getLast5Blocks(){
+        const last5Blocks: Block[] = []
+        for(let i = this.blocks.length - 1; (i >= 0 && i > this.blocks.length - 6); i--){
+            last5Blocks.push(this.blocks[i]);
+        }
 
-    getLast10BlockSerialized(){
-        //TODO
-    }
-
-    getFullChainSerialized(){
-        //TODO
-    }
-
-    addMultipleBlocksFromPeer(multipleBlocks: string){
-        //TODO
+        return last5Blocks;
     }
 
     /**
@@ -69,7 +65,7 @@ export class Blockchain {
         const miningEndTime = new Date();
         const totalMiningTime = (<any>miningEndTime - <any>this.miningStartTime);
         if(blockWasValid){
-            this.eventEmitter.emit('mined', this.currentBlock.serialize());
+            this.eventEmitter.emit('mined');
         }
         else{
             console.log("***ERROR - BLOCK WAS INVALID: " + this.currentBlock.toStringForPrinting());
@@ -104,7 +100,6 @@ export class Blockchain {
         //Don't accept until the other block is 3 ahead of you
 
     isValidNewBlock(block): boolean{
-        if(!block.isMined()) return false;
         if(!block.confirmProofOfWork()) return false; 
         if(block.blockNum !== this.blocks.length) return false;
 

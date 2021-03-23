@@ -7,13 +7,23 @@ var randomInt = require('random-int');
 var Blockchain = /** @class */ (function () {
     function Blockchain(eventEmitter) {
         this.blockReward = 50;
-        this.numZeros = 3;
+        this.numZeros = 3; //TODO: Make this dynamic. When there's a lot of miners, blocks will be mined too fast
         this.blocks = [];
         this.myPublicKey = "myPublicKey" + randomInt(10000);
         this.miningStartTime;
         this.eventEmitter = eventEmitter;
         console.log("*********BLOCKCHAIN PUBLIC KEY: ", this.myPublicKey);
     }
+    /**
+     * Returns less than 5 if the current blockchain is less than 5
+     */
+    Blockchain.prototype.getLast5Blocks = function () {
+        var last5Blocks = [];
+        for (var i = this.blocks.length - 1; (i >= 0 && i > this.blocks.length - 6); i--) {
+            last5Blocks.push(this.blocks[i]);
+        }
+        return last5Blocks;
+    };
     /**
      * TODO: This will give an error if the method is not run from
      * the browsercoin working directory!
@@ -40,8 +50,7 @@ var Blockchain = /** @class */ (function () {
         var miningEndTime = new Date();
         var totalMiningTime = (miningEndTime - this.miningStartTime);
         if (blockWasValid) {
-            // this.printLatestBlock();   
-            this.eventEmitter.emit('mined', this.currentBlock.serialize());
+            this.eventEmitter.emit('mined');
         }
         else {
             console.log("***ERROR - BLOCK WAS INVALID: " + this.currentBlock.toStringForPrinting());
@@ -71,8 +80,6 @@ var Blockchain = /** @class */ (function () {
     //TODO: Handle other blockchain being multiple blocks ahead
     //Don't accept until the other block is 3 ahead of you
     Blockchain.prototype.isValidNewBlock = function (block) {
-        if (!block.isMined())
-            return false;
         if (!block.confirmProofOfWork())
             return false;
         if (block.blockNum !== this.blocks.length)

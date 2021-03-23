@@ -35,30 +35,21 @@ export class NetworkManager{
     }     
 
     processMessageType(message: string, peer){
-        //TODO
-        
-        this.eventEmitter.emit('blockReceived', message);
+        //TODO: Parse message type
+        //If message is blockchain requested
+            // this.eventEmitter.emit('fullBlockchainRequested', peer)
+        //Else    
+        this.eventEmitter.emit('blocksReceived', message);
     }
 
-    sendMessage(message){
+    sendMessageToAllPeers(message: string){
         this.swarm.peers.forEach(peer => {
             peer.send(message);
-        });
-        //TODO
-    }
+        });        
+    }    
 
-    requestLastTenBlocks(peer){
-        //TODO
+    sendSerializedBlocks(serializedBlocks: string){
+        this.sendMessageToAllPeers(serializedBlocks);
     }
-
-    requestFullBlockchain(peer){
-        //TODO
-    }
-
-    sendSerializedBlock(serializedBlock){
-        this.sendMessage(serializedBlock);
-    }
-
     
-    //TODO: Store old messages so you ignore them
 }
