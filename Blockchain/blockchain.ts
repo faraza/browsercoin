@@ -13,7 +13,7 @@ export class Blockchain {
     eventEmitter: EventEmitter
     miningWorker: any
     readonly blockReward = 50
-    readonly numZeros = 3 //TODO: Make this dynamic. When there's a lot of miners, blocks will be mined too fast
+    readonly numZeros = 2 //TODO: Make this dynamic. When there's a lot of miners, blocks will be mined too fast
 
     constructor(eventEmitter){        
         this.blocks = []
@@ -29,9 +29,9 @@ export class Blockchain {
      */
     getLast5Blocks(){
         const last5Blocks: Block[] = []
-        for(let i = this.blocks.length - 1; (i >= 0 && i > this.blocks.length - 6); i--){
-            last5Blocks.push(this.blocks[i]);
-        }
+        let i = (this.blocks.length < 5) ? 0 : this.blocks.length - 5;
+        while(i < this.blocks.length)
+            last5Blocks.push(this.blocks[i++]);
 
         return last5Blocks;
     }

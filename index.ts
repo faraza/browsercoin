@@ -10,6 +10,7 @@ const network = new Networking(networkEvents);
 
 networkEvents.on('blocksReceived', (serializedBlocks)=>{
     console.log("$$$$$Blocks Received over network. Message: ", serializedBlocks);
+    
     //TODO: Convert to 
 })
 
