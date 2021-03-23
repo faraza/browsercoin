@@ -23,6 +23,10 @@ export class NetworkManager{
         this.swarm.on('connect', (peer, id)=>{
             console.log("Connected to peer: ", id)
             console.log("Total peers: " + this.swarm.peers.length);
+            
+            peer.on('data', (data)=>{
+                console.log("Message Received: ", data.toString()); //TODO: Call process function
+            })
         })
         this.swarm.on('disconnect', (peer, id)=>{
             console.log("Disconnected from peer: ", id)
@@ -37,6 +41,9 @@ export class NetworkManager{
     }
 
     sendMessage(message){
+        this.swarm.peers.forEach(peer => {
+            peer.send(message);
+        });
         //TODO
     }
 

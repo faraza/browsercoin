@@ -17,6 +17,9 @@ var NetworkManager = /** @class */ (function () {
         this.swarm.on('connect', function (peer, id) {
             console.log("Connected to peer: ", id);
             console.log("Total peers: " + _this.swarm.peers.length);
+            peer.on('data', function (data) {
+                console.log("Message Received: ", data.toString()); //TODO: Call process function
+            });
         });
         this.swarm.on('disconnect', function (peer, id) {
             console.log("Disconnected from peer: ", id);
@@ -28,6 +31,9 @@ var NetworkManager = /** @class */ (function () {
         // this.eventEmitter.emit('blockReceived', message);
     };
     NetworkManager.prototype.sendMessage = function (message) {
+        this.swarm.peers.forEach(function (peer) {
+            peer.send(message);
+        });
         //TODO
     };
     NetworkManager.prototype.sendSerializedBlock = function (serializedBlock) {
