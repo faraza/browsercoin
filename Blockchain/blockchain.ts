@@ -13,7 +13,7 @@ export class Blockchain {
     eventEmitter: EventEmitter
     miningWorker: any
     readonly blockReward = 50
-    readonly numZeros = 3
+    readonly numZeros = 3 //TODO: Make this dynamic. When there's a lot of miners, blocks will be mined too fast
 
     constructor(eventEmitter){        
         this.blocks = []

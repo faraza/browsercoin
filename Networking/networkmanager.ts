@@ -25,7 +25,7 @@ export class NetworkManager{
             console.log("Total peers: " + this.swarm.peers.length);
             
             peer.on('data', (data)=>{
-                console.log("Message Received: ", data.toString()); //TODO: Call process function
+                this.processMessageType(data.toString(), peer)                
             })
         })
         this.swarm.on('disconnect', (peer, id)=>{
@@ -34,10 +34,10 @@ export class NetworkManager{
         })
     }     
 
-    processMessageType(message){
+    processMessageType(message: string, peer){
         //TODO
         
-        // this.eventEmitter.emit('blockReceived', message);
+        this.eventEmitter.emit('blockReceived', message);
     }
 
     sendMessage(message){
