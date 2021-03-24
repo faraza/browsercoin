@@ -8,7 +8,7 @@ import './Blockchain/miner'
 const networkEvents = new EventEmitter();
 const network = new Networking(networkEvents);
 
-networkEvents.on('blocksReceived', (serializedBlocks)=>{
+networkEvents.on('blocksReceived', (serializedBlocks, peer)=>{
     const blocksJSON = JSON.parse(serializedBlocks)
     const blocksArray: Block[] = []
 
@@ -28,9 +28,13 @@ networkEvents.on('blocksReceived', (serializedBlocks)=>{
         }
         else{
             console.log("Peer blockchain is longer but it doesn't fit on this chain. Need to request full chain.")
-            //TODO: Request full block chain
+            network.requestFullBlockchainFromPeer(peer)            
         }
     }        
+})
+
+networkEvents.on('fullBlockchainRequested', (peer)=>{
+    network.sendFullBlockchainToPeer(blockchain.getFullBlockchainJSON(), peer);
 })
 
 const blockchainEvents = new EventEmitter();

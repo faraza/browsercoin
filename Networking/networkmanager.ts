@@ -7,7 +7,7 @@ export class NetworkManager{
     eventEmitter: EventEmitter
     swarm: typeof Swarm
     readonly SERVERENDPOINT = 'https://browsercoin.herokuapp.com/'
-    
+    readonly REQUESTFULLBLOCKCHAINMESSAGE = "REQUESTFULLBLOCKCHAIN"
 
     constructor(eventEmitter){
         this.eventEmitter = eventEmitter;        
@@ -35,18 +35,27 @@ export class NetworkManager{
     }     
 
     processMessageType(message: string, peer){
-        //TODO: Parse message type
-        //If message is blockchain requested
-            // this.eventEmitter.emit('fullBlockchainRequested', peer)
-        //Else    
-        this.eventEmitter.emit('blocksReceived', message);
+        if(message === this.REQUESTFULLBLOCKCHAINMESSAGE){
+            this.eventEmitter.emit('fullBlockchainRequested', peer)
+        }
+        else{
+            this.eventEmitter.emit('blocksReceived', message, peer);
+        }
     }
 
-    sendMessageToAllPeers(message: string){
+    requestFullBlockchainFromPeer(peer){
+        peer.send(this.REQUESTFULLBLOCKCHAINMESSAGE);
+    }
+
+    private sendMessageToAllPeers(message: string){
         this.swarm.peers.forEach(peer => {
             peer.send(message);
         });        
-    }    
+    }  
+    
+    sendFullBlockchainToPeer(serializedBlocks: string, peer){
+        peer.send(serializedBlocks);
+    }
 
     sendSerializedBlocks(serializedBlocks: string){
         this.sendMessageToAllPeers(serializedBlocks);

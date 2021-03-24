@@ -36,7 +36,16 @@ export class Blockchain {
         }
 
         return JSON.stringify(last5Blocks);
-    }    
+    }  
+    
+    getFullBlockchainJSON(): string{
+        const blocksJSONArray = []
+        for(let i = 0; i < this.blocks.length; i++){
+            blocksJSONArray.push(JSON.stringify(this.blocks[i]))
+        }
+
+        return JSON.stringify(blocksJSONArray);
+    }
 
     /**
      * After receiving new blocks from a peer, check 

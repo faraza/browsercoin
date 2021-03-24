@@ -6,6 +6,7 @@ var Swarm = require('webrtc-swarm');
 var NetworkManager = /** @class */ (function () {
     function NetworkManager(eventEmitter) {
         this.SERVERENDPOINT = 'https://browsercoin.herokuapp.com/';
+        this.REQUESTFULLBLOCKCHAINMESSAGE = "REQUESTFULLBLOCKCHAIN";
         this.eventEmitter = eventEmitter;
         var coinName = "farazCoin";
         this.connectToSwarm(coinName);
@@ -27,16 +28,23 @@ var NetworkManager = /** @class */ (function () {
         });
     };
     NetworkManager.prototype.processMessageType = function (message, peer) {
-        //TODO: Parse message type
-        //If message is blockchain requested
-        // this.eventEmitter.emit('fullBlockchainRequested', peer)
-        //Else    
-        this.eventEmitter.emit('blocksReceived', message);
+        if (message === this.REQUESTFULLBLOCKCHAINMESSAGE) {
+            this.eventEmitter.emit('fullBlockchainRequested', peer);
+        }
+        else {
+            this.eventEmitter.emit('blocksReceived', message, peer);
+        }
+    };
+    NetworkManager.prototype.requestFullBlockchainFromPeer = function (peer) {
+        peer.send(this.REQUESTFULLBLOCKCHAINMESSAGE);
     };
     NetworkManager.prototype.sendMessageToAllPeers = function (message) {
         this.swarm.peers.forEach(function (peer) {
             peer.send(message);
         });
+    };
+    NetworkManager.prototype.sendFullBlockchainToPeer = function (serializedBlocks, peer) {
+        peer.send(serializedBlocks);
     };
     NetworkManager.prototype.sendSerializedBlocks = function (serializedBlocks) {
         this.sendMessageToAllPeers(serializedBlocks);

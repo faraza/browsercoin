@@ -26,6 +26,13 @@ var Blockchain = /** @class */ (function () {
         }
         return JSON.stringify(last5Blocks);
     };
+    Blockchain.prototype.getFullBlockchainJSON = function () {
+        var blocksJSONArray = [];
+        for (var i = 0; i < this.blocks.length; i++) {
+            blocksJSONArray.push(JSON.stringify(this.blocks[i]));
+        }
+        return JSON.stringify(blocksJSONArray);
+    };
     /**
      * After receiving new blocks from a peer, check
      * if they can be added to the end of this chain and increase the chain

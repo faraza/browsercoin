@@ -7,7 +7,7 @@ var events_1 = require("events");
 require("./Blockchain/miner");
 var networkEvents = new events_1.EventEmitter();
 var network = new networkmanager_1.NetworkManager(networkEvents);
-networkEvents.on('blocksReceived', function (serializedBlocks) {
+networkEvents.on('blocksReceived', function (serializedBlocks, peer) {
     var blocksJSON = JSON.parse(serializedBlocks);
     var blocksArray = [];
     var lastBlock = block_1.Block.deserialize(blocksJSON[blocksJSON.length - 1]);
@@ -24,9 +24,12 @@ networkEvents.on('blocksReceived', function (serializedBlocks) {
         }
         else {
             console.log("Peer blockchain is longer but it doesn't fit on this chain. Need to request full chain.");
-            //TODO: Request full block chain
+            network.requestFullBlockchainFromPeer(peer);
         }
     }
+});
+networkEvents.on('fullBlockchainRequested', function (peer) {
+    network.sendFullBlockchainToPeer(blockchain.getFullBlockchainJSON(), peer);
 });
 var blockchainEvents = new events_1.EventEmitter();
 var blockchain = new blockchain_1.Blockchain(blockchainEvents);
