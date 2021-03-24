@@ -7,7 +7,7 @@ var randomInt = require('random-int');
 var Blockchain = /** @class */ (function () {
     function Blockchain(eventEmitter) {
         this.blockReward = 50;
-        this.numZeros = 2; //TODO: Make this dynamic. When there's a lot of miners, blocks will be mined too fast
+        this.numZeros = 3; //TODO: Make this dynamic. When there's a lot of miners, blocks will be mined too fast
         this.blocks = [];
         this.myPublicKey = "myPublicKey" + randomInt(10000);
         this.miningStartTime;
