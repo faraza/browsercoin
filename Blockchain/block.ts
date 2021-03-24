@@ -24,6 +24,7 @@ export class Block{
     numZeros: number
     prevHash: string
     nonce: number
+    hash: ""
 
     constructor(blockInfo : {blockNum: number, minerPublicKey: string, timestamp: string, blockReward: number, numZeros: number, prevHash: string}){
         this.blockNum = blockInfo.blockNum        
@@ -33,6 +34,7 @@ export class Block{
         this.numZeros = blockInfo.numZeros
     
         this.prevHash = blockInfo.prevHash
+        this.hash = ""
     }
 
     setNonce(nonce): void{
@@ -62,7 +64,7 @@ export class Block{
         let curNonce :number  = randomInt(99999999);
         while(!this.isValidProofOfWork(curNonce)){             
             curNonce++; 
-            await this.sleep(5) ;                                
+            await this.sleep(15) ;                                
         } 
         return curNonce;               
     } 
@@ -74,20 +76,27 @@ export class Block{
        */
     isValidProofOfWork(inputNonce): boolean{        
         const hash = sha256(this.toStringForHashing(inputNonce.toString()));
-        // console.log("Is valid proof of work. Nonce: " , inputNonce, " Hash: ", hash)
         return this.doesStringHaveLeadingZeros(hash)        
     }
 
     /**
-     * Assumes the block has been mined
+     * Assumes the block has been mined     
      */
     getHash(): string{
         if(this.nonce == null){
             console.log("ERROR. Block.js::getHash -- block not mined");
             return "0";
         }
+        if(this.hash == "") this.hash = sha256(this.toStringForHashing(this.nonce)); //TODO
+        // this.hash = sha256(this.toStringForHashing(this.nonce));
+        return this.hash;        
+    }
 
-        return sha256(this.toStringForHashing(this.nonce));
+    /**
+     * Security feature. Make sure you recalculate the hash of any block you get from the network
+     */
+    recalculateHash(){
+        this.hash = sha256(this.toStringForHashing(this.nonce));
     }
 
     confirmProofOfWork(): boolean{
@@ -130,6 +139,7 @@ export class Block{
         timestamp: parsedBlock.timestamp, blockReward: parsedBlock.blockReward, numZeros: parsedBlock.numZeros, prevHash: parsedBlock.prevHash})  
 
         returnBlock.nonce = parsedBlock.nonce;
+        returnBlock.recalculateHash();
         return returnBlock;           
     }
     

@@ -60,6 +60,7 @@ var Block = /** @class */ (function () {
         this.blockReward = blockInfo.blockReward;
         this.numZeros = blockInfo.numZeros;
         this.prevHash = blockInfo.prevHash;
+        this.hash = "";
     }
     Block.prototype.setNonce = function (nonce) {
         this.nonce = nonce;
@@ -91,7 +92,7 @@ var Block = /** @class */ (function () {
                     case 1:
                         if (!!this.isValidProofOfWork(curNonce)) return [3 /*break*/, 3];
                         curNonce++;
-                        return [4 /*yield*/, this.sleep(5)];
+                        return [4 /*yield*/, this.sleep(15)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 1];
@@ -107,7 +108,6 @@ var Block = /** @class */ (function () {
      */
     Block.prototype.isValidProofOfWork = function (inputNonce) {
         var hash = sha256(this.toStringForHashing(inputNonce.toString()));
-        // console.log("Is valid proof of work. Nonce: " , inputNonce, " Hash: ", hash)
         return this.doesStringHaveLeadingZeros(hash);
     };
     /**
@@ -118,7 +118,16 @@ var Block = /** @class */ (function () {
             console.log("ERROR. Block.js::getHash -- block not mined");
             return "0";
         }
-        return sha256(this.toStringForHashing(this.nonce));
+        if (this.hash == "")
+            this.hash = sha256(this.toStringForHashing(this.nonce)); //TODO
+        // this.hash = sha256(this.toStringForHashing(this.nonce));
+        return this.hash;
+    };
+    /**
+     * Security feature. Make sure you recalculate the hash of any block you get from the network
+     */
+    Block.prototype.recalculateHash = function () {
+        this.hash = sha256(this.toStringForHashing(this.nonce));
     };
     Block.prototype.confirmProofOfWork = function () {
         if (this.nonce == null)
@@ -152,6 +161,7 @@ var Block = /** @class */ (function () {
         var returnBlock = new Block({ blockNum: parsedBlock.blockNum, minerPublicKey: parsedBlock.minerPublicKey,
             timestamp: parsedBlock.timestamp, blockReward: parsedBlock.blockReward, numZeros: parsedBlock.numZeros, prevHash: parsedBlock.prevHash });
         returnBlock.nonce = parsedBlock.nonce;
+        returnBlock.recalculateHash();
         return returnBlock;
     };
     return Block;
