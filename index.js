@@ -17,7 +17,7 @@ networkEvents.on('blocksReceived', function (serializedBlocks) {
         blocksArray.push(block_1.Block.deserialize(blocksJSON[i]));
     }
     if (blockchain.isPeerBlockchainLonger(blocksArray)) {
-        if (blockchain.doBlocksFitOnChain(blocksArray)) {
+        if (blockchain.doPeerBlocksFitOnChain(blocksArray)) {
             var success = blockchain.addTailFromPeer(blocksArray);
             console.log("Added block tail from network. Success: ", success);
             console.log(blocksArray);

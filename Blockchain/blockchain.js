@@ -32,14 +32,21 @@ var Blockchain = /** @class */ (function () {
      * length.
      * If none of the blocks from the peer have a hash that attaches to this
      * chain, return false.
-     * @param blocks
+     * @param peerBlocks
      * @returns
      */
-    Blockchain.prototype.doBlocksFitOnChain = function (blocks) {
-        if (!this.isPeerBlockchainLonger(blocks))
+    Blockchain.prototype.doPeerBlocksFitOnChain = function (peerBlocks) {
+        if (!this.isPeerBlockchainLonger(peerBlocks))
             return false;
-        //TODO: Handle this blockchain is length 0 case. If it is, you must request full blockchain if you didn't get everything
-        return true;
+        var leftmostPeerBlock = peerBlocks[0];
+        if (leftmostPeerBlock.isGenesisBlock())
+            return true;
+        for (var i = 0; i < this.blocks.length; i++) {
+            var curBlock = this.blocks[i];
+            if (leftmostPeerBlock.prevHash == curBlock.getHash())
+                return true;
+        }
+        return false;
     };
     Blockchain.prototype.isPeerBlockchainLonger = function (peerTail) {
         var peerLength = peerTail[peerTail.length - 1].blockNum + 1;
@@ -62,6 +69,10 @@ var Blockchain = /** @class */ (function () {
         }
         if (!this.isPeerBlockchainConsistent(peerTail)) {
             console.log("AddTailFromPeer. Peer is not consistent");
+            return false;
+        }
+        if (!this.doPeerBlocksFitOnChain(peerTail)) {
+            console.log("AddTailFromPeer. Peer blocks don't fit on chain");
             return false;
         }
         if (peerTail[0].isGenesisBlock()) {

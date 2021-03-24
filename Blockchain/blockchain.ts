@@ -44,13 +44,19 @@ export class Blockchain {
      * length.
      * If none of the blocks from the peer have a hash that attaches to this
      * chain, return false.
-     * @param blocks 
+     * @param peerBlocks 
      * @returns 
      */
-    doBlocksFitOnChain(blocks: Block[]): boolean{
-        if(!this.isPeerBlockchainLonger(blocks)) return false;        
-        //TODO: Handle this blockchain is length 0 case. If it is, you must request full blockchain if you didn't get everything
-        return true;
+    doPeerBlocksFitOnChain(peerBlocks: Block[]): boolean{
+        if(!this.isPeerBlockchainLonger(peerBlocks)) return false;        
+        const leftmostPeerBlock = peerBlocks[0];
+        if(leftmostPeerBlock.isGenesisBlock()) return true;
+
+        for(let i = 0; i < this.blocks.length; i++){
+            const curBlock = this.blocks[i];
+            if(leftmostPeerBlock.prevHash == curBlock.getHash()) return true;
+        }
+        return false;        
     }
 
     isPeerBlockchainLonger(peerTail: Block[]): boolean{
@@ -81,7 +87,7 @@ export class Blockchain {
             return false;
         }
 
-        if(!this.doBlocksFitOnChain(peerTail)){
+        if(!this.doPeerBlocksFitOnChain(peerTail)){
             console.log("AddTailFromPeer. Peer blocks don't fit on chain")
             return false;
         }
