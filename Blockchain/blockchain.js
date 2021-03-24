@@ -56,10 +56,14 @@ var Blockchain = /** @class */ (function () {
         return true;
     };
     Blockchain.prototype.addTailFromPeer = function (peerTail) {
-        if (!this.isPeerBlockchainLonger(peerTail))
+        if (!this.isPeerBlockchainLonger(peerTail)) {
+            console.log("AddTailFromPeer. Peer is too short");
             return false;
-        if (!this.isPeerBlockchainConsistent(peerTail))
+        }
+        if (!this.isPeerBlockchainConsistent(peerTail)) {
+            console.log("AddTailFromPeer. Peer is not consistent");
             return false;
+        }
         if (peerTail[0].isGenesisBlock()) {
             this.killMiningWorker();
             this.blocks = peerTail;
@@ -127,6 +131,7 @@ var Blockchain = /** @class */ (function () {
     Blockchain.prototype.pushBlockToEndOfChain = function (block) {
         if (!this.isValidNewBlock(block))
             return false;
+        block.recalculateHash();
         this.blocks.push(block);
         return true;
     };
@@ -134,12 +139,8 @@ var Blockchain = /** @class */ (function () {
         var latestBlock = this.blocks[this.blocks.length - 1];
         console.log("\n***New block mined! " + latestBlock.toStringForPrinting());
     };
-    //TODO: Handle other blockchain being multiple blocks ahead
-    //Don't accept until the other block is 3 ahead of you
     Blockchain.prototype.isValidNewBlock = function (block) {
         if (!block.confirmProofOfWork())
-            return false;
-        if (block.blockNum !== this.blocks.length)
             return false;
         if (this.blocks.length == 0) {
             if (block.blockNum !== 0)

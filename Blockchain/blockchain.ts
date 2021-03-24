@@ -72,8 +72,19 @@ export class Blockchain {
     }    
 
     addTailFromPeer(peerTail: Block[]): boolean{
-        if(!this.isPeerBlockchainLonger(peerTail)) return false;
-        if(!this.isPeerBlockchainConsistent(peerTail)) return false;
+        if(!this.isPeerBlockchainLonger(peerTail)){ 
+            console.log("AddTailFromPeer. Peer is too short")
+            return false;
+        }
+        if(!this.isPeerBlockchainConsistent(peerTail)){
+            console.log("AddTailFromPeer. Peer is not consistent")
+            return false;
+        }
+
+        if(!this.doBlocksFitOnChain(peerTail)){
+            console.log("AddTailFromPeer. Peer blocks don't fit on chain")
+            return false;
+        }
 
         if(peerTail[0].isGenesisBlock()){
             this.killMiningWorker();
@@ -147,6 +158,7 @@ export class Blockchain {
 
     pushBlockToEndOfChain(block: Block): boolean{
         if(!this.isValidNewBlock(block)) return false;
+        block.recalculateHash();
         
         this.blocks.push(block);
         return true;
@@ -157,12 +169,8 @@ export class Blockchain {
         console.log("\n***New block mined! " + latestBlock.toStringForPrinting());
     }
 
-    //TODO: Handle other blockchain being multiple blocks ahead
-        //Don't accept until the other block is 3 ahead of you
-
     isValidNewBlock(block: Block): boolean{
         if(!block.confirmProofOfWork()) return false; 
-        if(block.blockNum !== this.blocks.length) return false;
 
         if(this.blocks.length == 0){
             if(block.blockNum !== 0) return false;            

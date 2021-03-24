@@ -11,8 +11,8 @@ networkEvents.on('blocksReceived', function (serializedBlocks) {
     var blocksJSON = JSON.parse(serializedBlocks);
     var blocksArray = [];
     var lastBlock = block_1.Block.deserialize(blocksJSON[blocksJSON.length - 1]);
-    console.log("\n\n$$$$$Blocks Received over network. Network length: " + lastBlock.blockNum +
-        " My length: " + blockchain.blocks.length);
+    console.log("\n\n$$$$$Blocks Received over network. Network length: " + (lastBlock.blockNum + 1) +
+        " My length: " + blockchain.blocks.length + " My blocks:\n", blockchain.blocks);
     for (var i = 0; i < blocksJSON.length; i++) {
         blocksArray.push(block_1.Block.deserialize(blocksJSON[i]));
     }
@@ -23,6 +23,7 @@ networkEvents.on('blocksReceived', function (serializedBlocks) {
             console.log(blocksArray);
         }
         else {
+            console.log("Peer blockchain is longer but it doesn't fit on this chain. Need to request full chain.");
             //TODO: Request full block chain
         }
     }
@@ -30,7 +31,7 @@ networkEvents.on('blocksReceived', function (serializedBlocks) {
 var blockchainEvents = new events_1.EventEmitter();
 var blockchain = new blockchain_1.Blockchain(blockchainEvents);
 blockchainEvents.on('mined', function () {
-    console.log("\n\n\n\nIndex.js::New block mined. Sending: ", blockchain.getLast5BlocksJSON());
+    console.log("******Block mined. Length: " + blockchain.blocks.length + " Blocks:\n", blockchain.blocks);
     network.sendSerializedBlocks(blockchain.getLast5BlocksJSON());
 });
 blockchain.runMiningLoop();
