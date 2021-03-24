@@ -17,12 +17,34 @@ var Blockchain = /** @class */ (function () {
     /**
      * Returns less than 5 if the current blockchain is less than 5
      */
-    Blockchain.prototype.getLast5Blocks = function () {
+    Blockchain.prototype.getLast5BlocksJSON = function () {
         var last5Blocks = [];
         var i = (this.blocks.length < 5) ? 0 : this.blocks.length - 5;
-        while (i < this.blocks.length)
-            last5Blocks.push(this.blocks[i++]);
-        return last5Blocks;
+        while (i < this.blocks.length) {
+            last5Blocks.push(JSON.stringify(this.blocks[i]));
+            i++;
+        }
+        return JSON.stringify(last5Blocks);
+    };
+    /**
+     * After receiving new blocks from a peer, check
+     * if they can be added to the end of this chain and increase the chain
+     * length.
+     * If none of the blocks from the peer have a hash that attaches to this
+     * chain, return false.
+     * @param blocks
+     * @returns
+     */
+    Blockchain.prototype.blocksFitOnChain = function (blocks) {
+        if (!this.isPeerBlockchainLonger(blocks))
+            return false;
+        //TODO: Handle this blockchain is length 0 case. If it is, you must request full blockchain if you didn't get everything
+        //TODO: If none of the blocks
+        return true;
+    };
+    Blockchain.prototype.isPeerBlockchainLonger = function (peerTail) {
+        //TODO
+        return true;
     };
     /**
      * TODO: This will give an error if the method is not run from

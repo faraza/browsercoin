@@ -27,13 +27,36 @@ export class Blockchain {
     /**
      * Returns less than 5 if the current blockchain is less than 5
      */
-    getLast5Blocks(){
-        const last5Blocks: Block[] = []
+    getLast5BlocksJSON(): string{
+        const last5Blocks: string[] = []
         let i = (this.blocks.length < 5) ? 0 : this.blocks.length - 5;
-        while(i < this.blocks.length)
-            last5Blocks.push(this.blocks[i++]);
+        while(i < this.blocks.length){
+            last5Blocks.push(JSON.stringify(this.blocks[i]));
+            i++
+        }
 
-        return last5Blocks;
+        return JSON.stringify(last5Blocks);
+    }
+
+    /**
+     * After receiving new blocks from a peer, check 
+     * if they can be added to the end of this chain and increase the chain
+     * length.
+     * If none of the blocks from the peer have a hash that attaches to this
+     * chain, return false.
+     * @param blocks 
+     * @returns 
+     */
+    blocksFitOnChain(blocks: Block[]): boolean{
+        if(!this.isPeerBlockchainLonger(blocks)) return false;        
+        //TODO: Handle this blockchain is length 0 case. If it is, you must request full blockchain if you didn't get everything
+        //TODO: If none of the blocks
+        return true;
+    }
+
+    isPeerBlockchainLonger(peerTail: Block[]): boolean{
+        //TODO
+        return true;
     }
 
     /**
