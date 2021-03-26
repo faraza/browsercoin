@@ -2,7 +2,6 @@
 exports.__esModule = true;
 exports.Blockchain = void 0;
 var block_1 = require("./block");
-var fork = require('child_process').fork;
 var randomInt = require('random-int');
 var Blockchain = /** @class */ (function () {
     function Blockchain(eventEmitter) {
@@ -115,8 +114,8 @@ var Blockchain = /** @class */ (function () {
      * the browsercoin working directory!
      */
     Blockchain.prototype.setupMiningWorker = function () {
-        this.miningWorker = fork('./Blockchain/miner.js');
-        this.miningWorker.on('message', this.nonceFoundHandler.bind(this));
+        this.miningWorker = new Worker('./miner.js');
+        this.miningWorker.onmessage = this.nonceFoundHandler.bind(this);
     };
     Blockchain.prototype.runMiningLoop = function () {
         console.log("mining loop start");
@@ -127,7 +126,7 @@ var Blockchain = /** @class */ (function () {
             numZeros: this.numZeros, prevHash: prevHash });
         console.log("run mining loop. ");
         this.setupMiningWorker();
-        this.miningWorker.send(this.currentBlock.serialize());
+        this.miningWorker.postMessage(this.currentBlock.serialize());
     };
     Blockchain.prototype.nonceFoundHandler = function (nonce) {
         console.log("nonce found handler start. Nonce: ", nonce);
@@ -171,7 +170,7 @@ var Blockchain = /** @class */ (function () {
         return true;
     };
     Blockchain.prototype.killMiningWorker = function () {
-        this.miningWorker.kill();
+        this.miningWorker.terminate();
     };
     Blockchain.prototype.getTotalWalletSize = function () {
         //TODO

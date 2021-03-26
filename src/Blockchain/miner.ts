@@ -5,9 +5,9 @@
 
  import {Block} from './block'
 
-process.on('message', (serializedBlock) =>{    
-    console.log("miner::start")
-    const block = Block.deserialize(serializedBlock);    
+onmessage = function(serializedBlock){    
+    console.log('Miner.js -- received message from main')
+    const block = Block.deserialize(serializedBlock as unknown as string);
     const nonce = block.findNonce()
-        .then((nonce)=>process.send(nonce));    
-})
+        .then((nonce)=>postMessage(nonce, '*'));
+}

@@ -1,6 +1,5 @@
 import {EventEmitter} from 'node:events';
 import {Block} from './block'
-const { fork } = require('child_process');
 const randomInt = require('random-int');
 
 
@@ -135,8 +134,8 @@ export class Blockchain {
      * the browsercoin working directory!
      */
     setupMiningWorker(): void{
-        this.miningWorker = fork('./Blockchain/miner.js'); 
-        this.miningWorker.on('message', this.nonceFoundHandler.bind(this));
+        this.miningWorker = new Worker('./miner.js')
+        this.miningWorker.onmessage = this.nonceFoundHandler.bind(this);
     }    
 
     runMiningLoop(): void{
@@ -148,7 +147,7 @@ export class Blockchain {
             numZeros: this.numZeros, prevHash: prevHash})
         console.log("run mining loop. ")
         this.setupMiningWorker();
-        this.miningWorker.send(this.currentBlock.serialize());
+        this.miningWorker.postMessage(this.currentBlock.serialize());
     }
 
     nonceFoundHandler(nonce: number): void{
@@ -198,7 +197,7 @@ export class Blockchain {
     }
 
     killMiningWorker(){
-        this.miningWorker.kill();        
+        this.miningWorker.terminate();        
     }
 
 
