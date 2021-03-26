@@ -107,7 +107,7 @@ var Block = /** @class */ (function () {
      * @returns
      */
     Block.prototype.isValidProofOfWork = function (inputNonce) {
-        var hash = sha256(this.toStringForHashing(inputNonce.toString()));
+        var hash = sha256(this.toStringForHashing(inputNonce));
         return this.doesStringHaveLeadingZeros(hash);
     };
     /**
