@@ -15,11 +15,10 @@ export class Blockchain {
     readonly blockReward = 50
     readonly numZeros = 3 //TODO: Make this dynamic. When there's a lot of miners, blocks will be mined too fast
 
-    constructor(eventEmitter){        
+    constructor(eventEmitter: EventEmitter){        
         this.blocks = []
         this.myPublicKey = "myPublicKey" + randomInt(10000);
         
-        this.miningStartTime;
         this.eventEmitter = eventEmitter;
         console.log("*********BLOCKCHAIN PUBLIC KEY: ", this.myPublicKey);
     }

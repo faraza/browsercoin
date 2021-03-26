@@ -1,5 +1,4 @@
-
-var sha256 = require('js-sha256');
+const sha256 = require('js-sha256')
 const randomInt = require('random-int');
 
 /**
@@ -37,11 +36,11 @@ export class Block{
         this.hash = ""
     }
 
-    setNonce(nonce): void{
+    setNonce(nonce: number): void{
         this.nonce = nonce;
     }    
     
-    sleep(ms) {
+    sleep(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
       
@@ -74,8 +73,8 @@ export class Block{
        * @param {*} inputNonce 
        * @returns 
        */
-    isValidProofOfWork(inputNonce): boolean{        
-        const hash = sha256(this.toStringForHashing(inputNonce.toString()));
+    isValidProofOfWork(inputNonce: number): boolean{        
+        const hash = sha256(this.toStringForHashing(inputNonce));
         return this.doesStringHaveLeadingZeros(hash)        
     }
 
@@ -105,7 +104,7 @@ export class Block{
         return this.isValidProofOfWork(this.nonce);
     }
 
-    protected doesStringHaveLeadingZeros(stringToTest): boolean{
+    protected doesStringHaveLeadingZeros(stringToTest: string): boolean{
         for(let i = 0; i < this.numZeros; i++){
             if(stringToTest.charAt(i) !== '0') return false;
         }
@@ -132,7 +131,7 @@ export class Block{
         return JSON.stringify(this);
     }
 
-    static deserialize(blockJSON){     
+    static deserialize(blockJSON: string){     
         const parsedBlock = JSON.parse(blockJSON);
 
         const returnBlock = new Block({blockNum: parsedBlock.blockNum, minerPublicKey: parsedBlock.minerPublicKey,
